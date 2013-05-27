@@ -577,6 +577,31 @@ public final class WriterBasedJsonGenerator
      */
 
     @Override
+    public void writeNumber(short s)
+        throws IOException, JsonGenerationException
+    {
+        _verifyValueWrite("write number");
+        if (_cfgNumbersAsStrings) {
+            _writeQuotedShort(s);
+            return;
+        }
+        // up to 5 digits and possible minus sign
+        if ((_outputTail + 6) >= _outputEnd) {
+            _flushBuffer();
+        }
+        _outputTail = NumberOutput.outputInt(s, _outputBuffer, _outputTail);
+    }
+
+    private void _writeQuotedShort(short s) throws IOException {
+        if ((_outputTail + 8) >= _outputEnd) {
+            _flushBuffer();
+        }
+        _outputBuffer[_outputTail++] = '"';
+        _outputTail = NumberOutput.outputInt(s, _outputBuffer, _outputTail);
+        _outputBuffer[_outputTail++] = '"';
+    }    
+
+    @Override
     public void writeNumber(int i)
         throws IOException, JsonGenerationException
     {
@@ -814,7 +839,7 @@ public final class WriterBasedJsonGenerator
             }
             break;
         default:
-            _cantHappen();
+            _throwInternal();
             break;
         }
     }
@@ -1589,7 +1614,11 @@ public final class WriterBasedJsonGenerator
         maxRead = Math.min(maxRead, readBuffer.length);
         
         do {
-            int count = in.read(readBuffer, inputEnd, maxRead - inputEnd);
+            int length = maxRead - inputEnd;
+            if (length == 0) {
+                break;
+            }
+            int count = in.read(readBuffer, inputEnd, length);            
             if (count < 0) {
                 return inputEnd;
             }

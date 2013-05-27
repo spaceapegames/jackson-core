@@ -1,16 +1,6 @@
 /* Jackson JSON-processor.
  *
  * Copyright (c) 2007- Tatu Saloranta, tatu.saloranta@iki.fi
- *
- * Licensed under the License specified in file LICENSE, included with
- * the source code and binary code bundles.
- * You may not use this file except in compliance with the License.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 package com.fasterxml.jackson.core;
 
@@ -241,7 +231,7 @@ public abstract class JsonGenerator
     /**
      * Accessor for finding out version of the bundle that provided this generator instance.
      */
-//  @Override
+    @Override
     public abstract Version version();
 
     /**
@@ -785,6 +775,19 @@ public abstract class JsonGenerator
      * (Array value, Object field value, root-level value).
      * Additional white space may be added around the value
      * if pretty-printing is enabled.
+     *
+     * @since 2.2
+     */
+    public void writeNumber(short v) throws IOException, JsonGenerationException {
+        writeNumber((int) v);
+    }
+
+    /**
+     * Method for outputting given value as Json number.
+     * Can be called in any context where a value is expected
+     * (Array value, Object field value, root-level value).
+     * Additional white space may be added around the value
+     * if pretty-printing is enabled.
      */
     public abstract void writeNumber(int v)
         throws IOException, JsonGenerationException;
@@ -1186,6 +1189,7 @@ public abstract class JsonGenerator
      * target (output stream, writer), and to flush the target itself
      * as well.
      */
+    @Override
     public abstract void flush() throws IOException;
 
     /**
@@ -1212,6 +1216,6 @@ public abstract class JsonGenerator
      * If either of above is true, the target is also closed. Otherwise
      * (not managing, feature not enabled), target is not closed.
      */
-//    @Override
+    @Override
     public abstract void close() throws IOException;
 }

@@ -281,6 +281,11 @@ public class JsonGeneratorDelegate extends JsonGenerator
      */
 
     @Override
+    public void writeNumber(short v) throws IOException, JsonGenerationException {
+        delegate.writeNumber(v);
+    }
+
+    @Override
     public void writeNumber(int v) throws IOException, JsonGenerationException {
         delegate.writeNumber(v);
     }
@@ -406,5 +411,4 @@ public class JsonGeneratorDelegate extends JsonGenerator
     public boolean isClosed() {
         return delegate.isClosed();
     }
-    
 }

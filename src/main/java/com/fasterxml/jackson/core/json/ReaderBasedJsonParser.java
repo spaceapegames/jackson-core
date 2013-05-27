@@ -77,18 +77,13 @@ public final class ReaderBasedJsonParser
         _symbols = st;
         _hashSeed = st.hashSeed();
     }
-
-    @Override
-    public Version version() {
-        return PackageVersion.VERSION;
-    }
     
     /*
     /**********************************************************
     /* Base method defs, overrides
     /**********************************************************
      */
-    
+
     @Override
     public ObjectCodec getCodec() {
         return _objectCodec;
@@ -259,8 +254,9 @@ public final class ReaderBasedJsonParser
         case VALUE_NUMBER_INT:
         case VALUE_NUMBER_FLOAT:
             return _textBuffer.contentsAsString();
+        default:
+            return t.asString();
         }
-        return t.asString();
     }
 
     @Override
@@ -344,14 +340,10 @@ public final class ReaderBasedJsonParser
             case VALUE_NUMBER_INT:
             case VALUE_NUMBER_FLOAT:
                 return _textBuffer.getTextOffset();
+            default:
             }
         }
         return 0;
-    }
-
-    @Override
-    public Object getEmbeddedObject() throws IOException, JsonParseException {
-        return null;
     }
 
     @Override
@@ -404,8 +396,7 @@ public final class ReaderBasedJsonParser
         }
     }
 
-    protected int _readBinary(Base64Variant b64variant, OutputStream out,
-                              byte[] buffer)
+    protected int _readBinary(Base64Variant b64variant, OutputStream out, byte[] buffer)
             throws IOException, JsonParseException
     {
         int outputPtr = 0;
@@ -811,8 +802,9 @@ public final class ReaderBasedJsonParser
             return Boolean.TRUE;
         case VALUE_FALSE:
             return Boolean.FALSE;
+        default:
+        	return null;
         }
-        return null;
     }
     
     @Override
@@ -1818,11 +1810,11 @@ public final class ReaderBasedJsonParser
         do {
             if (_inputPtr >= _inputEnd) {
                 if (!loadMore()) {
-                    _reportInvalidEOFInValue();
+                    _reportInvalidToken(matchStr.substring(0, i));
                 }
             }
             if (_inputBuffer[_inputPtr] != matchStr.charAt(i)) {
-                _reportInvalidToken(matchStr.substring(0, i), "'null', 'true', 'false' or NaN");
+                _reportInvalidToken(matchStr.substring(0, i));
             }
             ++_inputPtr;
         } while (++i < len);
@@ -1839,7 +1831,7 @@ public final class ReaderBasedJsonParser
         }
         // if Java letter, it's a problem tho
         if (Character.isJavaIdentifierPart(c)) {
-            _reportInvalidToken(matchStr.substring(0, i), "'null', 'true', 'false' or NaN");
+            _reportInvalidToken(matchStr.substring(0, i));
         }
         return;
     }
@@ -1969,6 +1961,11 @@ public final class ReaderBasedJsonParser
     /**********************************************************
      */
 
+    protected void _reportInvalidToken(String matchedPart)
+            throws IOException, JsonParseException {
+        _reportInvalidToken(matchedPart, "'null', 'true', 'false' or NaN");
+    }
+    
     protected void _reportInvalidToken(String matchedPart, String msg)
         throws IOException, JsonParseException
     {

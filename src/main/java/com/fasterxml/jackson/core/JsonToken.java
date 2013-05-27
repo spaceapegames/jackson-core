@@ -1,3 +1,8 @@
+/* Jackson JSON-processor.
+ *
+ * Copyright (c) 2007- Tatu Saloranta, tatu.saloranta@iki.fi
+ */
+
 package com.fasterxml.jackson.core;
 
 /**
@@ -32,19 +37,19 @@ public enum JsonToken
     START_OBJECT("{"),
         
     /**
-     * START_OBJECT is returned when encountering '}'
+     * END_OBJECT is returned when encountering '}'
      * which signals ending of an Object value
      */
     END_OBJECT("}"),
         
     /**
-     * START_OBJECT is returned when encountering '['
+     * START_ARRAY is returned when encountering '['
      * which signals starting of an Array value
      */
     START_ARRAY("["),
 
     /**
-     * START_OBJECT is returned when encountering ']'
+     * END_ARRAY is returned when encountering ']'
      * which signals ending of an Array value
      */
     END_ARRAY("]"),

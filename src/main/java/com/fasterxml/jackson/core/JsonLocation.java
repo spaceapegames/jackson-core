@@ -1,3 +1,8 @@
+/* Jackson JSON-processor.
+ *
+ * Copyright (c) 2007- Tatu Saloranta, tatu.saloranta@iki.fi
+ */
+
 package com.fasterxml.jackson.core;
 
 /**
@@ -23,9 +28,11 @@ public class JsonLocation
     final int _columnNr;
 
     /**
-     * Displayable description for input source: file path, url
+     * Displayable description for input source: file path, URL.
+     *<p>
+     * NOTE: <code>transient</code> since 2.2 so that Location itself is Serializable.
      */
-    final Object _sourceRef;
+    final transient Object _sourceRef;
 
     public JsonLocation(Object srcRef, long totalChars, int lineNr, int colNr)
     {

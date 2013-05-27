@@ -75,6 +75,7 @@ public abstract class GeneratorBase
         _objectCodec = codec;
         _cfgNumbersAsStrings = isEnabled(Feature.WRITE_NUMBERS_AS_STRINGS);
     }
+
     /**
      * Implemented with detection that tries to find "VERSION.txt" in same
      * package as the implementation class.
@@ -271,7 +272,7 @@ public abstract class GeneratorBase
             writeNull();
         } else {
             if (_objectCodec == null) {
-                throw new IllegalStateException("No ObjectCodec defined for the generator, can not serialize JsonNode-based trees");
+                throw new IllegalStateException("No ObjectCodec defined");
             }
             _objectCodec.writeValue(this, rootNode);
         }
@@ -370,7 +371,7 @@ public abstract class GeneratorBase
             writeObject(jp.getEmbeddedObject());
             break;
         default:
-            _cantHappen();
+            _throwInternal();
         }
     }
 
@@ -413,20 +414,34 @@ public abstract class GeneratorBase
     /**********************************************************
      */
 
+    /**
+     * Method called to release any buffers generator may be holding,
+     * once generator is being closed.
+     */
     protected abstract void _releaseBuffers();
 
+    /**
+     * Method called before trying to write a value (scalar or structured),
+     * to verify that this is legal in current output state, as well as to
+     * output separators if and as necessary.
+     * 
+     * @param typeMsg Additional message used for generating exception message
+     *   if value output is NOT legal in current generator output state.
+     */
     protected abstract void _verifyValueWrite(String typeMsg)
         throws IOException, JsonGenerationException;
 
+    /**
+     * Helper method used for constructing and throwing
+     * {@link JsonGenerationException} with given base message.
+     *<p>
+     * Note that sub-classes may override this method to add more detail
+     * or use a {@link JsonGenerationException} sub-class.
+     */
     protected void _reportError(String msg)
         throws JsonGenerationException
     {
         throw new JsonGenerationException(msg);
-    }
-
-    protected void _cantHappen()
-    {
-        throw new RuntimeException("Internal error: should never end up through this code path");
     }
 
     /**
@@ -502,7 +517,7 @@ public abstract class GeneratorBase
     }    
 
     protected final void _throwInternal() {
-        throw new RuntimeException("Internal error: this code path should never get executed");
+        VersionUtil.throwInternal();
     }
 
     protected void _reportUnsupportedOperation() {

@@ -1,16 +1,6 @@
 /* Jackson JSON-processor.
  *
  * Copyright (c) 2007- Tatu Saloranta, tatu.saloranta@iki.fi
- *
- * Licensed under the License specified in file LICENSE, included with
- * the source code and binary code bundles.
- * You may not use this file except in compliance with the License.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package com.fasterxml.jackson.core;
@@ -327,7 +317,7 @@ public abstract class JsonParser
      * Accessor for getting version of the core package, given a parser instance.
      * Left for sub-classes to implement.
      */
-//  @Override
+    @Override
     public abstract Version version();
     
     /*
@@ -351,7 +341,7 @@ public abstract class JsonParser
      * {@link java.io.File} or {@link java.net.URL} and creates
      * stream or reader it does own them.
      */
-//  @Override
+    @Override
     public abstract void close() throws IOException;
 
     /*
@@ -576,8 +566,9 @@ public abstract class JsonParser
             return Boolean.TRUE;
         case VALUE_FALSE:
             return Boolean.FALSE;
+        default:
+            return null;
         }
-        return null;
     }
     
     /**
